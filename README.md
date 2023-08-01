@@ -1,4 +1,4 @@
-# SCOS processing
+# SCOS data processing
 
 Communications Biology 2023 - Measuring human cerebral blood flow and brain function with fiber-based speckle contrast optical spectroscopy system
 
