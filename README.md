@@ -4,8 +4,8 @@ Communications Biology 2023 - Measuring human cerebral blood flow and brain func
 
 We created a data analysis pipeline for SCOS under photon starved conditions. This repository contains:
 
-1) Sample speckle images from Hamamatsu ORCA-Fusion camera (./sample data)
-2) Camera calibration parameters such as gain, dark offset image and mask to remove hot pixels (./camera calibration)
+1) Sample speckle images and dark camera image from Hamamatsu ORCA-Fusion camera (./sample data)
+2) Camera parameters such as gain and mask (./camera calibration)
 3) Functions and script to run the noise correction pipeline
 
 To run the code:
