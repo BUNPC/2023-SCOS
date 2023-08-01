@@ -27,5 +27,8 @@ The HamamatsuPipeline.m outputs:
 
    <img width="543" alt="Screenshot 2023-08-01 at 1 02 06 PM" src="https://github.com/BUNPC/2023-SCOS/assets/55467463/578c7c4f-e610-4b15-a806-f895a126be78">
 
+For any issue reporting or suggestions, please contact Byungchan Kim, kennykim@bu.edu
+
+
 [![DOI](https://zenodo.org/badge/672077193.svg)](https://zenodo.org/badge/latestdoi/672077193)
 
