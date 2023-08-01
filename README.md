@@ -22,7 +22,9 @@ The HamamatsuPipeline.m outputs:
    <img width="540" alt="Screenshot 2023-08-01 at 1 01 35 PM" src="https://github.com/BUNPC/2023-SCOS/assets/55467463/6443c906-7d1e-40f4-bada-4362fe3dd914">
 4) Contribution of noise sources to the measured speckle contrast
    <img width="539" alt="Screenshot 2023-08-01 at 1 01 53 PM" src="https://github.com/BUNPC/2023-SCOS/assets/55467463/d70cc54a-b65f-4537-9e13-c04fab0c9bad">
-5) Fundamental speckle contrast after noise correction and the corresponding blood flow index  
+   
+5) Fundamental speckle contrast after noise correction and the corresponding blood flow index
+
    <img width="543" alt="Screenshot 2023-08-01 at 1 02 06 PM" src="https://github.com/BUNPC/2023-SCOS/assets/55467463/578c7c4f-e610-4b15-a806-f895a126be78">
 
 [![DOI](https://zenodo.org/badge/672077193.svg)](https://zenodo.org/badge/latestdoi/672077193)
