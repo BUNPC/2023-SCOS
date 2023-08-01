@@ -6,18 +6,19 @@ clc;
 matlab_ver = str2double(matlab_ver(end-3:end));
 use_pop_ups = false; % change this to True if you want to use UI file selector to select files.
 
-%% meta tags
+%% set paths
 
 meta.aux_dir = [];
-meta.img_dir = '.\sample data\img_file.h5';
+currentFolder = pwd;
+meta.img_dir = fullfile(pwd,'/sample data/img_file.h5');
 meta.use_intensity_weight = true;
 meta.use_lsq_fit = false;
 
 meta.mean_img_dir = [];
 
-meta.dark_dir = '.\sample data\dark.mat';
-meta.gain_map_dir = '.\resources\gain.mat';
-meta.mask_dir = '.\resources\mask.mat';
+meta.dark_dir = fullfile(pwd,'/sample data/dark.mat');
+meta.gain_map_dir = fullfile(pwd,'/resources/gain.mat');
+meta.mask_dir = fullfile(pwd,'/resources/mask.mat');
 
 %% interaction to decide files and other stuff
 
@@ -84,7 +85,7 @@ t = double(h5read(meta.img_dir,'/timestamp'))*1e-9;
 fr = round(1000/(t(2)-t(1)))/1000;
 
 if contains(meta.dark_dir,'.h5')
-    % get dark images and save it
+    % get and save dark images
     disp('Obtaining the dark image from h5 file.')
     dark_meta = h5read(meta.dark_dir,'/Metadata');
     dark_length = numel(dark_meta.timestamp);
@@ -117,7 +118,7 @@ disp(meta)
 % remove pixels with high variance
 mask = mask & dark_var < 100;
 
-%% other parameters
+%% block averaging parameters
 
 block_size = 100;
 window_size = 7;
@@ -135,14 +136,14 @@ for block=1:10:numel(t)-1
 end
 cc_mean = cc_mean';
 
-f_cc_mean = figure('Position',[50 50 500 400]);
+f_cc_mean = figure;
 plot(10:10:10*numel(cc_mean),cc_mean);
 good_ind = true(size(t));
 
 % get average image
 disp('get average image')
 
-% first quickly get average image to show
+% display average image from initial points
 good_start = find(good_ind,1,'first');
 mean_img = zeros(size(img,1),size(img,2));
 block_starts = good_start:10:find(good_ind,1,'last');
@@ -152,7 +153,8 @@ for block_ind = block_starts
 end
 mean_img = mean_img./numel(block_starts);
 
-f1 = figure('Position',[50 50 400 300]); imagesc(mean_img); axis image; colorbar;
+f1 = figure; 
+imagesc(mean_img); axis image; colorbar;
 
 % use loaded image if told to do so
 if ~isempty(meta.mean_img_dir)
@@ -239,7 +241,7 @@ for block=1:length(block_start)
     end
 end
 
-%% get aux data
+%% get auxilary data
 
 try
     stim_data=h5read(meta.aux_dir,'/DigitalIn_headers');
@@ -260,7 +262,8 @@ save(fullfile(fileparts(meta.img_dir),save_file),...
     'roi_positions','window_size','gain','dark_var', ...
     'mean_img_reference','meta');
 
-%% plot
+%% plot figures
+
 close all;
 
 roi_ind = 1;
@@ -272,28 +275,28 @@ x_lim = [min(t_sub) max(t_sub)];
 
 var_I = filtfilt(b,a,K2_total_ROI(:,roi_ind)).*(filtfilt(b,a,cc_ROI(:,roi_ind)).^2);
 
-figure('Position',[50 50 500 400]);
+figure;
 subplot(2,1,1); plot(t_sub,sqrt(var_I),'LineWidth',1.5);
 xlim(x_lim);
-ylabel('std dev'); set(gca,'FontSize',18);
+ylabel('\sigma(I)'); set(gca,'FontSize',18);
 subplot(2,1,2); plot(t_sub,filtfilt(b,a,cc_ROI(:,roi_ind)),'LineWidth',1.5);
 xlim(x_lim);
-xlabel('time (s)');
-ylabel('mean intensity'); set(gca,'FontSize',18);
+xlabel('t (s)');
+ylabel('<I>'); set(gca,'FontSize',18);
 
 Iall_smooth = smooth(filtfilt(b,a,cc_ROI(:,roi_ind)),fr);
 
-f1 = figure('Position',[50 50 700 500]);
+f1 = figure;
 plot(t_sub,cc_ROI(:,roi_ind)); hold on;
 plot(t_sub,Iall_smooth,'LineWidth',2);
 
-ylabel('Intensity (ADU)'); xlabel('Time (s)')
+ylabel('Intensity (ADU)'); xlabel('t (s)')
 xlim(x_lim);
 set(gca,'FontSize',18)
 
 legend('Intensity','Intensity (smoothed)');
 
-f2 = figure('Position',[50 50 700 500]);
+f2 = figure;
 plot(t_sub,filtfilt(b,a,K2_total_ROI(:,roi_ind)),'LineWidth',1); hold on;
 plot(t_sub,filtfilt(b,a,K2_shot_ROI(:,roi_ind)),'LineWidth',1);
 plot(t_sub,filtfilt(b,a,K2_read_ROI(:,roi_ind)),'LineWidth',1);
@@ -301,22 +304,22 @@ plot(t_sub,filtfilt(b,a,K2_quantized_ROI(:,roi_ind)),'LineWidth',1);
 plot(t_sub,filtfilt(b,a,K2_spatial_ROI(:,roi_ind)),'LineWidth',1);
 plot(t_sub,filtfilt(b,a,K2_fundamental_ROI(:,roi_ind)),'LineWidth',1);
 ylabel('K^2');
-xlabel('time (s)');
+xlabel('t (s)');
 
 legend('K^2 total','K^2 shot','K^2 read','K^2 dig','K^2 spatial','K^2 fund')
 xlim(x_lim);
 set(gca,'FontSize',18);
 
-f3 = figure('Position',[50 50 700 500]);
+f3 = figure;
 subplot(2,1,1);
-plot(t_sub,filtfilt(b,a,K2_fundamental_ROI(:,roi_ind)),'LineWidth',1);
+plot(t_sub,filtfilt(b,a,K2_fundamental_ROI(:,roi_ind)),'LineWidth',1.5);
 ylabel('K_f^2');
-xlabel('time (s)');
+xlabel('t (s)');
 xlim(x_lim);
 set(gca,'FontSize',18);
 subplot(2,1,2);
-plot(t_sub,filtfilt(b,a,1./K2_fundamental_ROI(:,roi_ind)),'LineWidth',1);
+plot(t_sub,filtfilt(b,a,1./K2_fundamental_ROI(:,roi_ind)),'LineWidth',1.5);
 ylabel('BFi');
-xlabel('time (s)');
+xlabel('t (s)');
 xlim(x_lim);
 set(gca,'FontSize',18);
