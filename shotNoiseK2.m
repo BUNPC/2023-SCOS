@@ -1,8 +1,9 @@
 function [K2_shot] = shotNoiseK2(intensity,gain)
-%correctShotNoise Summary of this function goes here
-%   speckleContrastSquared
-%   intensity
-%   gain (ADU/e-)
+%correctShotNoise calculates shot noise K2 from intensity and camera gain
+%(ADU/e-)
+%   Inputs:
+%       intensity = nx1 vector
+%       gain (ADU/e-) = constant
 
 offset = 1./intensity;
 K2_shot = offset*gain;
